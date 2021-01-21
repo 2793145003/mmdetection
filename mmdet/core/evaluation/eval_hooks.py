@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader
 
 from mmdet.utils import get_root_logger
 
+import openbayestool
 
 class EvalHook(Hook):
     """Evaluation hook.
@@ -156,6 +157,7 @@ class EvalHook(Hook):
                 self.logger.info(
                     f'Now best checkpoint is epoch_{runner.epoch + 1}.pth.'
                     f'Best {self.key_indicator} is {best_score:0.4f}')
+                openbayestool.log_metric("mAP", best_score)
 
     def evaluate(self, runner, results):
         eval_res = self.dataloader.dataset.evaluate(
@@ -253,3 +255,4 @@ class DistEvalHook(EvalHook):
                     self.logger.info(
                         f'Now best checkpoint is {last_ckpt}.'
                         f'Best {self.key_indicator} is {best_score:0.4f}')
+                    openbayestool.log_metric("mAP", best_score)

@@ -1,0 +1,9 @@
+{
+    "metrics": "mAP",
+    "image_width": 1440,
+    "image_height": 1080,
+    "classes": ["mucai"],
+    "batch_size": 8,
+    "epochs": 12,
+    "resnet_depth": 50
+}
