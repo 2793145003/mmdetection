@@ -5,5 +5,9 @@
     "classes": ["mucai"],
     "batch_size": 8,
     "epochs": 12,
-    "resnet_depth": 50
+    "resnet_depth": "r50",
+    "use_caffe": true,
+    "backbone_end": "fpn",
+    "lr_schd": "1x",
+    "loss": "l1"
 }

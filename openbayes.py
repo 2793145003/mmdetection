@@ -4,10 +4,6 @@ import argparse
 import numpy as np
 import pandas as pd
 
-os.system('pip install pytest-runner')
-os.system('MMCV_WITH_OPS=1 pip install -e /output/mmcv')
-os.system('pip install -v -e /output/mmdetection')
-
 import mmcv
 from mmcv import Config
 
@@ -17,6 +13,7 @@ from mmdet.models import build_detector
 from mmdet.datasets import build_dataset
 from mmdet.datasets.custom import CustomDataset
 from mmdet.datasets.builder import DATASETS
+from mmdet.utils.get_config_file import get_config_file_from_params
 
 @DATASETS.register_module()
 class OpenbayesDataset(CustomDataset):
@@ -79,8 +76,9 @@ def main():
     parser = argparse.ArgumentParser(description='Main')
     parser.add_argument('--input', '-i', help='input dataset path', default="/input0/")
     parser.add_argument('--output', '-o', help='output model path', default="/output/model_output")
+    parser.add_argument('--model', '-m', help='algorithm', default="faster_rcnn")
     parser.add_argument('--hparams', '-p', help='hyper params json path', default="/output/mmdetection/openbayes_params.json")
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
     print(args)
 
     params = json.load(open(args.hparams))
@@ -88,7 +86,7 @@ def main():
     # print(params)
 
     # default_parameters
-    cfg = Config.fromfile('mmdetection/configs/faster_rcnn/faster_rcnn_r{}_caffe_fpn_1x_coco.py'.format(params['resnet_depth']))
+    cfg = Config.fromfile(get_config_file_from_params(params))
     cfg.dataset_type = 'OpenbayesDataset'
     cfg.data.test.type = 'OpenbayesDataset'
     cfg.data.test.ann_file = 'train_meta.csv'
@@ -97,7 +95,7 @@ def main():
     cfg.data.val.type = 'OpenbayesDataset'
     cfg.data.val.ann_file = 'val_meta.csv'
     cfg.model.roi_head.bbox_head.num_classes = len(params['classes'])
-    cfg.load_from = 'checkpoints/mask_rcnn_r50_caffe_fpn_mstrain-poly_3x_coco_bbox_mAP-0.408__segm_mAP-0.37_20200504_163245-42aa3d00.pth'
+    # cfg.load_from = 'checkpoints/mask_rcnn_r50_caffe_fpn_mstrain-poly_3x_coco_bbox_mAP-0.408__segm_mAP-0.37_20200504_163245-42aa3d00.pth'
     cfg.work_dir = params['args']['output']
     cfg.evaluation.metric = params['metrics']
     cfg.evaluation.save_best = 'mAP'

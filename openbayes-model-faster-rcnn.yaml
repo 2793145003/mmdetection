@@ -3,7 +3,7 @@ instruction: "自动建模 faster-rcnn 模型"
 default_runtime: PyTorch 1.7.0
 resource_candidates:
 - V100_32
-prefix_command: python openbayes.py --input /input0/ --output ./model_output --hparams openbayes_params.json
+prefix_command: sh /output/mmdetection/setup.sh && python /output/mmdetection/openbayes.py --input /input0/ --output ./model_output --model "faster_rcnn" --hparams /output/mmdetection/openbayes_params.json \#
 access_path: ./model_output
 default_max_job_count: 5
 default_parallel_count: 1
@@ -25,52 +25,37 @@ default_parameters:
 - name: batch_size
   value: 4
 - name: epochs
-  value: 12
+  value: 1
 parameter_specs:
 - name: resnet_depth
   type: DISCRETE
   discrete_values:
-  - 50
-  - 101
-
-
-
-# - name: block_fn
-#   type: CATEGORICAL
-#   categorical_values:
-#   - bottleneck
-#   - basic_block
-# - name: repetitions_1
-#   type: DISCRETE
-#   discrete_values:
-#   - 2
-#   - 3
-# - name: repetitions_2
-#   type: INTEGER
-#   min_value: 2
-#   max_value: 8
-#   scale_type: UNIT_LINEAR_SCALE
-# - name: repetitions_3
-#   type: INTEGER
-#   min_value: 2
-#   max_value: 36
-#   scale_type: UNIT_LINEAR_SCALE
-# - name: repetitions_4
-#   type: DISCRETE
-#   discrete_values:
-#   - 2
-#   - 3
-# - name: init_filters
-#   type: INTEGER
-#   min_value: 8
-#   max_value: 64
-#   scale_type: UNIT_LINEAR_SCALE
-# - name: main_filters
-#   type: INTEGER
-#   min_value: 8
-#   max_value: 64
-#   scale_type: UNIT_LINEAR_SCALE
-  # - name: epochs #   type: INTEGER
-  #   min_value: 5
-  #   max_value: 20
-  #   scale_type: UNIT_LINEAR_SCALE
+  - r50
+  - r101
+  - x101_32x4d
+  - x101_64x4d
+- name: use_caffe
+  type: DISCRETE
+  discrete_values:
+  - true
+  - false
+- name: backbone
+  type: DISCRETE
+  discrete_values:
+  - c4
+  - dc5
+  - fpn
+- name: lr_schd
+  type: DISCRETE
+  discrete_values:
+  - 1x
+  - 2x
+- name: loss
+  type: DISCRETE
+  discrete_values:
+  - l1
+  - bounded_iou
+  - giou
+  - iou
+  - ohem
+  - soft_nms
