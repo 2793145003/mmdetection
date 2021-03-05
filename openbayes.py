@@ -54,7 +54,15 @@ class OpenbayesDataset(CustomDataset):
 
                     if bbox_name in cat2label:
                         gt_labels.append(cat2label[bbox_name])
-                        gt_bboxes.append([bbox["x_min"]*width, bbox["y_min"]*height, bbox["x_max"]*width, bbox["y_max"]*height])
+                        if "x_min" in bbox:
+                            gt_bboxes.append([bbox["x_min"]*width, bbox["y_min"]*height, bbox["x_max"]*width, bbox["y_max"]*height])
+                        else:
+                            gt_bboxes.append([
+                                min(bbox["x_arr"])*width,
+                                min(bbox["y_arr"])*height,
+                                max(bbox["x_arr"])*width,
+                                max(bbox["y_arr"])*height,
+                            ])
                     else:
                         print(bbox_name, cat2label)
                         gt_labels_ignore.append(-1)

@@ -5,7 +5,10 @@ def get_config_file_from_params(params):
     if params["args"]["model"] == "faster_rcnn":
         file_name = "faster_rcnn_{}".format(params["resnet_depth"])
         if params["use_caffe"]:
-            file_name = "{}_caffe".format(file_name)
+            if params["resnet_depth"] == "r50":
+                file_name = "{}_caffe".format(file_name)
+            if params["resnet_depth"] == "r101" and params["lr_schd"] == '1x':
+                file_name = "{}_caffe".format(file_name)
         if params["resnet_depth"] == "r50" and params["use_caffe"]:
             file_name = "{}_{}".format(file_name, params["backbone_end"])
         else:
